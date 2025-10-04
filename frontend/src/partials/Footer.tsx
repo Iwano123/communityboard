@@ -1,13 +1,13 @@
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container } from 'react-bootstrap';
 
 export default function Footer() {
-  return <footer>
-    <Container fluid>
-      <Row>
-        <Col className="text-center py-3 text-bg-primary">
-          © The Good Grocery {new Date().getFullYear()}
-        </Col>
-      </Row>
-    </Container>
-  </footer>;
+  return (
+    <footer className="bg-dark text-light py-4 mt-5">
+      <Container>
+        <div className="text-center">
+          <p className="mb-0">&copy; Community Board 2025</p>
+        </div>
+      </Container>
+    </footer>
+  );
 }

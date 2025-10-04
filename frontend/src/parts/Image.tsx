@@ -1,14 +1,19 @@
-import { useStateContext } from '../utils/useStateObject';
+import { Image as BootstrapImage } from 'react-bootstrap';
 
-// an image component that automatically switches to black and white
-// by adding the css class 'bw' if bwImages is true in our context
-export default function Image(props: any) {
-  const [{ bwImages }] = useStateContext();
-  props = { ...props };
-  props.className = (props.className || '')
-    // Bootstrap specific classes
-    + ' className="img-fluid w-100 border border-1 border-primary rounded mb-3'
-    // Class for black and white
-    + (bwImages ? ' bw' : '');
-  return <img {...props} />;
+interface ImageProps {
+  src: string;
+  alt: string;
+  className?: string;
+  style?: React.CSSProperties;
+}
+
+export default function Image({ src, alt, className, style }: ImageProps) {
+  return (
+    <BootstrapImage
+      src={src}
+      alt={alt}
+      className={className}
+      style={style}
+    />
+  );
 }
