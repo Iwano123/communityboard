@@ -1,46 +1,204 @@
 import { useState } from 'react';
+import { Navbar, Nav, Container, Button, Alert } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
-import { Container, Nav, Navbar } from 'react-bootstrap';
+import { useOnlineStatus } from '../utils/customHooks';
 import routes from '../routes';
+import type { User } from '../interfaces/BulletinBoard';
 
-export default function Header() {
+interface HeaderProps {
+  user: User | null;
+  setUser: (user: User | null) => void;
+}
 
-  // whether the navbar is expanded or not
-  // (we use this to close it after a click/selection)
+export default function Header({ user, setUser }: HeaderProps) {
   const [expanded, setExpanded] = useState(false);
+  const isOnline = useOnlineStatus();
+  const location = useLocation();
 
-  //  get the current route
-  const pathName = useLocation().pathname;
-  const currentRoute = routes
-    .slice().sort((a, b) => a.path.length > b.path.length ? -1 : 1)
-    .find(x => pathName.indexOf(x.path.split(':')[0]) === 0);
-  // function that returns true if a menu item is 'active'
-  const isActive = (path: string) =>
-    path === currentRoute?.path || path === currentRoute?.parent;
+
+  const handleLogout = async () => {
+    try {
+      await fetch('http://localhost:5002/api/login', { method: 'DELETE' });
+      setUser(null);
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  };
+
+  const isActive = (path: string) => {
+    return location.pathname === path;
+  };
 
   return <header>
-    <Navbar
-      expanded={expanded}
-      expand="md"
-      className="bg-primary"
-      data-bs-theme="dark"
-      fixed="top"
-    >
-      <Container fluid>
-        <Navbar.Brand className="me-5" as={Link} to="/">
-          The Good Grocery
+    {!isOnline && (
+      <Alert variant="warning" className="mb-0 text-center py-2">
+        <small>⚠️ You're offline. Some features may not work properly.</small>
+      </Alert>
+    )}
+
+        {/* Twitter-like Navigation */}
+        <Navbar
+          expanded={expanded}
+          expand="lg"
+          className="bg-white border-bottom"
+          fixed="top"
+          style={{ zIndex: 1000 }}
+        >
+      <Container fluid className="px-4">
+        {/* Logo/Brand */}
+        <Navbar.Brand className="me-4" as={Link} to="/">
+          <div className="d-flex align-items-center">
+            <div 
+              className="rounded-circle me-2" 
+              style={{ 
+                width: '32px', 
+                height: '32px', 
+                backgroundColor: '#1d9bf0',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'white',
+                fontWeight: 'bold',
+                fontSize: '16px'
+              }}
+            >
+              C
+            </div>
+            <span className="fw-bold text-dark">Community</span>
+          </div>
         </Navbar.Brand>
-        <Navbar.Toggle onClick={() => setExpanded(!expanded)} />
+
+        <Navbar.Toggle 
+          onClick={() => setExpanded(!expanded)} 
+          className="border-0"
+          style={{ boxShadow: 'none' }}
+        />
+
         <Navbar.Collapse id="basic-navbar-nav">
+          {/* Main Navigation */}
           <Nav className="me-auto">
-            {routes.filter(x => x.menuLabel).map(
-              ({ menuLabel, path }, i) =>
-                <Nav.Link
-                  as={Link} key={i} to={path}
-                  className={isActive(path) ? 'active' : ''}
-                  /* close menu after selection*/
-                  onClick={() => setTimeout(() => setExpanded(false), 200)}
-                >{menuLabel}</Nav.Link>
+            {routes.filter(x => x.menuLabel && (x.path !== '/admin' || user?.role === 'admin')).map(
+              (route) => {
+                const path = route.path || (route.index ? '/' : '');
+                return (
+                  <Nav.Link
+                    as={Link}
+                    key={path}
+                    to={path}
+                    className={`fw-semibold px-3 py-2 rounded-pill me-1 ${
+                      isActive(path)
+                        ? 'text-primary bg-primary bg-opacity-10'
+                        : 'text-dark'
+                    }`}
+                    onClick={() => setTimeout(() => setExpanded(false), 200)}
+                  >
+                    {route.menuLabel}
+                  </Nav.Link>
+                );
+              }
+            )}
+          </Nav>
+
+          {/* User Actions */}
+          <Nav className="align-items-center">
+            {user ? (
+              <>
+                <Nav.Link as={Link} to="/post/create" className="me-2">
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    className="rounded-pill px-4 fw-semibold"
+                    style={{ backgroundColor: '#1d9bf0', borderColor: '#1d9bf0' }}
+                  >
+                    Post
+                  </Button>
+                </Nav.Link>
+                
+                {/* Simple Logout Button */}
+                <Button
+                  variant="outline-danger"
+                  size="sm"
+                  className="rounded-pill px-3 fw-semibold me-2"
+                  onClick={handleLogout}
+                >
+                  Logout
+                </Button>
+
+                {/* User Profile Dropdown */}
+                <div className="dropdown">
+                  <button
+                    className="btn btn-outline-light border-0 d-flex align-items-center"
+                    type="button"
+                    id="userDropdown"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                    style={{ backgroundColor: 'transparent' }}
+                  >
+                    <div
+                      className="rounded-circle me-2"
+                      style={{
+                        width: '32px',
+                        height: '32px',
+                        backgroundColor: '#1d9bf0',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'white',
+                        fontWeight: 'bold',
+                        fontSize: '14px'
+                      }}
+                    >
+                      {user.firstName.charAt(0).toUpperCase() || '?'}
+                    </div>
+                    <span className="text-dark fw-semibold small">
+                      {user.firstName}
+                    </span>
+                  </button>
+                  <ul className="dropdown-menu dropdown-menu-end">
+                    <li>
+                      <Link className="dropdown-item" to="/profile">
+                        <i className="bi bi-person me-2"></i>Profile
+                      </Link>
+                    </li>
+                    {user?.role === 'admin' && (
+                      <li>
+                        <Link className="dropdown-item" to="/admin">
+                          <i className="bi bi-gear me-2"></i>Admin Panel
+                        </Link>
+                      </li>
+                    )}
+                    <li><hr className="dropdown-divider" /></li>
+                    <li>
+                      <button className="dropdown-item text-danger" onClick={handleLogout}>
+                        <i className="bi bi-box-arrow-right me-2"></i>Logout
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </>
+            ) : (
+              <>
+                <Nav.Link as={Link} to="/login" className="me-2">
+                  <Button
+                    variant="outline-primary"
+                    size="sm"
+                    className="rounded-pill px-4 fw-semibold"
+                  >
+                    Login
+                  </Button>
+                </Nav.Link>
+                <Nav.Link as={Link} to="/register">
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    className="rounded-pill px-4 fw-semibold"
+                    style={{ backgroundColor: '#1d9bf0', borderColor: '#1d9bf0' }}
+                  >
+                    Sign Up
+                  </Button>
+                </Nav.Link>
+              </>
             )}
           </Nav>
         </Navbar.Collapse>
