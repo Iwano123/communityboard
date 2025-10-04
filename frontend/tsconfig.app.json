@@ -28,8 +28,8 @@
     ]
   },
   "include": [
-    "src",
-    "src/**/*.test.tsx",
-    "src/test/**/*"
+    "frontend/src",
+    "frontend/src/**/*.test.tsx",
+    "frontend/src/test/**/*"
   ]
 }
