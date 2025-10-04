@@ -1,10 +1,8 @@
-import type { JSX } from 'react';
-
 export default interface Route {
-  element: JSX.Element;
-  path: string;
-  loader?: Function;
+  path?: string;
+  element: React.ReactElement;
   menuLabel?: string;
-  index?: number;
+  index?: boolean | number;
   parent?: string;
+  loader?: () => Promise<any>;
 }
