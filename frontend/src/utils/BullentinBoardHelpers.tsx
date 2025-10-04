@@ -1,38 +1,29 @@
-
-export function getHelpers(productsJson: any) {
-
-  const products = productsJson as Product[];
-
-  const categories = [
-    'All (' + products.length + ')',
-    ...products
-      // map to category arrays from each product
-      .map(x => x.categories)
-      // flatten to one array
-      .flat()
-      // add count of products in to each category
-      .map((x, _i, a) => x + ' ('
-        + a.filter(y => x === y).length + ')')
-      // remove duplicates
-      .filter((x, i, a) => a.indexOf(x) === i)
-      // sort (by name)
-      .sort()
+export function getHelpers(posts: any[]) {
+  const categories = ['All', 'Community', 'For Sale', 'Services', 'Jobs', 'Events', 'Featured'];
+  const sortOptions = [
+    { key: 'created_at', order: -1, description: 'Newest first' },
+    { key: 'created_at', order: 1, description: 'Oldest first' },
+    { key: 'title', order: 1, description: 'Title A-Z' },
+    { key: 'title', order: -1, description: 'Title Z-A' },
+    { key: 'views', order: -1, description: 'Most viewed' }
   ];
-
-  const sortOptions: SortOption[] = [
-    { description: 'Price (low to high)', key: 'price$', order: 1 },
-    { description: 'Price (high to low)', key: 'price$', order: -1 },
-    { description: 'Product name (a-z)', key: 'name', order: 1 },
-    { description: 'Product name (z-a)', key: 'name', order: -1 }
-  ];
-
-  const sortDescriptions = sortOptions
-    .map(x => x.description);
+  const sortDescriptions = sortOptions.map(x => x.description);
 
   return {
-    products,
+    posts,
     categories,
     sortOptions,
     sortDescriptions
   };
+}
+
+export function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
 }
