@@ -1,10 +1,3 @@
-import type Product from '../interfaces/Product';
-
-export interface SortOption {
-  description: string;
-  key: keyof Product,
-  order: number;
-}
 
 export function getHelpers(productsJson: any) {
 

@@ -1,4 +1,4 @@
-import type Product from '../interfaces/Product';
+import type Product from '../interfaces/BullentinBoard';
 import { useNavigate } from 'react-router-dom';
 import { Card, Button, Row, Col } from 'react-bootstrap';
 import Image from './Image';
