@@ -5,6 +5,9 @@
 # from template.db
 backend/databases/live.sqlite3
 
+# Ignore build output
+backend/obj
+backend/bin
 # Logs
 logs
 *.log
