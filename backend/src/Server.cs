@@ -4,7 +4,24 @@ public static class Server
     public static void Start()
     {
         var builder = WebApplication.CreateBuilder();
+        
+        // Add CORS services
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowFrontend", policy =>
+            {
+                policy.WithOrigins("http://localhost:5173", "http://localhost:3000", "http://localhost:4173")
+                      .AllowAnyHeader()
+                      .AllowAnyMethod()
+                      .AllowCredentials();
+            });
+        });
+        
         App = builder.Build();
+        
+        // Use CORS
+        App.UseCors("AllowFrontend");
+        
         Middleware();
         DebugLog.Start();
         Acl.Start();
