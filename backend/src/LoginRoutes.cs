@@ -8,6 +8,12 @@ public static class LoginRoutes
 
     public static void Start()
     {
+        // Handle OPTIONS requests for CORS preflight
+        App.MapMethods("/api/login", new[] { "OPTIONS" }, (HttpContext context) =>
+        {
+            return Results.Ok();
+        });
+
         App.MapPost("/api/login", (HttpContext context, JsonElement bodyJson) =>
         {
             var user = GetUser(context);
