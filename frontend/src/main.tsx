@@ -6,7 +6,7 @@ import App from './App';
 import '../sass/index.scss';
 
 // Register service worker for PWA (temporarily disabled to avoid fetch errors)
-/*
+
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js')
@@ -18,7 +18,7 @@ if ('serviceWorker' in navigator) {
       });
   });
 }
-*/
+
 
 const router = createBrowserRouter([
   {
