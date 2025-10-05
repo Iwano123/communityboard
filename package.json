@@ -27,5 +27,8 @@
     "community"
   ],
   "author": "Iwan Korkis",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "vite-plugin-pwa": "^1.0.3"
+  }
 }

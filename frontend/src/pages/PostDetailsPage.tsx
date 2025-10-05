@@ -30,21 +30,58 @@ export default function PostDetailsPage() {
         setLoading(true);
         setError('');
 
-        // Load post details
-        const postResponse = await fetch(`http://localhost:5002/api/posts/${id}`, {
+        // Check if user has already viewed this post in this session
+        const viewedPostsKey = 'viewedPosts';
+        const viewedPosts = JSON.parse(localStorage.getItem(viewedPostsKey) || '[]');
+        const hasViewed = viewedPosts.includes(parseInt(id));
+
+        // First, get the current post
+        const currentPostResponse = await fetch(`http://localhost:5002/api/posts/${id}`, {
           credentials: 'include'
         });
         
-        if (!postResponse.ok) {
+        if (!currentPostResponse.ok) {
           throw new Error('Post not found');
         }
         
-        const postData = await postResponse.json();
-        setPost(postData);
+        const currentPostData = await currentPostResponse.json();
+        
+        // Increment view count only if user hasn't viewed this post in this session
+        if (!hasViewed) {
+          try {
+            await fetch(`http://localhost:5002/api/posts/${id}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              credentials: 'include',
+              body: JSON.stringify({
+                views: (currentPostData.views || 0) + 1
+              })
+            });
+            
+            // Mark this post as viewed in localStorage
+            const updatedViewedPosts = [...viewedPosts, parseInt(id)];
+            localStorage.setItem(viewedPostsKey, JSON.stringify(updatedViewedPosts));
+            
+            // Update the post data with incremented views
+            setPost({
+              ...currentPostData,
+              views: (currentPostData.views || 0) + 1
+            });
+          } catch (viewError) {
+            console.log('Could not increment view count:', viewError);
+            // Continue loading even if view increment fails
+            setPost(currentPostData);
+          }
+        } else {
+          // User has already viewed this post, don't increment
+          setPost(currentPostData);
+        }
 
         // Load author details
-        if (postData.author_id) {
-          const authorResponse = await fetch(`http://localhost:5002/api/users/${postData.author_id}`, {
+        if (currentPostData.author_id) {
+          const authorResponse = await fetch(`http://localhost:5002/api/users/${currentPostData.author_id}`, {
             credentials: 'include'
           });
           if (authorResponse.ok) {
@@ -175,7 +212,7 @@ export default function PostDetailsPage() {
         <Col lg={8} className="mx-auto">
           {/* Post Details */}
           <Card className="mb-4">
-            <Card.Header className="bg-white border-0 pb-0">
+            <Card.Header className="border-0 pb-0">
               <div className="d-flex align-items-center justify-content-between">
                 <div className="d-flex align-items-center">
                   <div

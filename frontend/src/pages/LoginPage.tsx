@@ -34,6 +34,8 @@ export default function LoginPage() {
       if (response.ok) {
         const user = await response.json();
         setUser(user);
+        // Clear viewed posts from localStorage on login
+        localStorage.removeItem('viewedPosts');
         navigate('/');
       } else {
         setError('Invalid email or password');

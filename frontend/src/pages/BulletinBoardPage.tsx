@@ -1,10 +1,10 @@
-import { useLoaderData } from 'react-router-dom';
+import { useLoaderData, useNavigate } from 'react-router-dom';
 import { Row, Col, Form, Button, Card, Badge } from 'react-bootstrap';
 import { useStateContext } from '../utils/useStateObject';
 import Select from '../parts/Select';
 import PostCard from '../parts/PostCard';
 import postsLoader from '../utils/postsLoader';
-import { getHelpers } from '../utils/bulletinBoardHelpers';
+import { getHelpers } from '../utils/BulletinBoardHelpers';
 import { useState, useEffect } from 'react';
 import type { Post, Category, User } from '../interfaces/BulletinBoard';
 
@@ -17,6 +17,7 @@ BulletinBoardPage.route = {
 
 export default function BulletinBoardPage() {
   const rawPosts = useLoaderData().posts;
+  const navigate = useNavigate();
   const [posts, setPosts] = useState<Post[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -76,6 +77,33 @@ export default function BulletinBoardPage() {
     const count = posts.filter(post => post.category_name === cat.name).length;
     return `${cat.name} (${count})`;
   })];
+
+  // Handle edit post
+  const handleEditPost = (postId: number) => {
+    navigate(`/edit-post/${postId}`);
+  };
+
+  // Handle delete post
+  const handleDeletePost = async (postId: number) => {
+    if (!confirm('Are you sure you want to delete this post?')) return;
+
+    try {
+      const response = await fetch(`http://localhost:5002/api/posts/${postId}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        // Remove the post from the local state
+        setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
+      } else {
+        alert('Failed to delete post');
+      }
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      alert('Error deleting post');
+    }
+  };
 
   if (loading) {
     return <div className="container mt-5 text-center">Loading...</div>;
@@ -191,7 +219,11 @@ export default function BulletinBoardPage() {
               })
               .map(post => (
                 <div key={post.id} className="mb-3">
-                  <PostCard {...post} />
+                  <PostCard 
+                    {...post} 
+                    onEdit={handleEditPost}
+                    onDelete={handleDeletePost}
+                  />
                 </div>
               ))
           )}
