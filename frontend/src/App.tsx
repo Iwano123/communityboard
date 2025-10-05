@@ -18,7 +18,9 @@ export default function App() {
   useEffect(() => {
     const checkLoginStatus = async () => {
       try {
-        const response = await fetch('http://localhost:5002/api/login');
+        const response = await fetch('http://localhost:5002/api/login', {
+          credentials: 'include'
+        });
         if (response.ok) {
           const userData = await response.json();
           setUser(userData);

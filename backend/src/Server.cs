@@ -10,7 +10,7 @@ public static class Server
         {
             options.AddPolicy("AllowFrontend", policy =>
             {
-                policy.WithOrigins("http://localhost:5173", "http://localhost:3000", "http://localhost:4173")
+                policy.WithOrigins("http://localhost:5173", "http://localhost:5174", "http://localhost:3000", "http://localhost:4173")
                       .AllowAnyHeader()
                       .AllowAnyMethod()
                       .AllowCredentials();
