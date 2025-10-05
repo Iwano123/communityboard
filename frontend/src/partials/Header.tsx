@@ -78,7 +78,7 @@ export default function Header({ user, setUser }: HeaderProps) {
         <Navbar.Collapse id="basic-navbar-nav">
           {/* Main Navigation */}
           <Nav className="me-auto">
-            {routes.filter(x => x.menuLabel && (x.path !== '/admin' || user?.role === 'admin')).map(
+            {routes.filter(x => x.menuLabel && (x.path !== '/admin' || user?.role === 'admin') && x.path !== '/login' && x.path !== '/register').map(
               (route) => {
                 const path = route.path || (route.index ? '/' : '');
                 return (

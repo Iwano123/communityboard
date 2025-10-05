@@ -1,63 +1,137 @@
-import { Card, Container, Row, Col, Form, Button } from 'react-bootstrap';
 import { useState } from 'react';
+import { useNavigate, Link, useOutletContext } from 'react-router-dom';
+import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
+import type { User } from '../interfaces/BulletinBoard';
 
 LoginPage.route = {
   path: '/login',
-  menuLabel: 'Login',
   parent: '/'
 };
 
 export default function LoginPage() {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
+  const navigate = useNavigate();
+  const [, , , setUser] = useOutletContext<[any, any, User | null, (user: User | null) => void]>();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement login logic
-    console.log('Login attempt:', formData);
-  };
+    setLoading(true);
+    setError('');
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    try {
+      const response = await fetch('http://localhost:5002/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (response.ok) {
+        const user = await response.json();
+        setUser(user);
+        navigate('/');
+      } else {
+        setError('Invalid email or password');
+      }
+    } catch (err) {
+      setError('Error logging in');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <Container className="mt-4">
-      <Row>
-        <Col lg={6} className="mx-auto">
-          <Card>
-            <Card.Body>
-              <h1 className="card-title text-center">Login</h1>
+    <Container className="mt-5">
+      <Row className="justify-content-center">
+        <Col md={6} lg={4}>
+          <Card className="card-twitter">
+            <Card.Header className="text-center bg-white border-0 pb-0">
+              <div className="d-flex align-items-center justify-content-center mb-3">
+                <div 
+                  className="avatar-twitter me-2" 
+                  style={{ 
+                    width: '48px', 
+                    height: '48px', 
+                    backgroundColor: '#1d9bf0',
+                    fontSize: '20px'
+                  }}
+                >
+                  C
+                </div>
+                <h4 className="mb-0 text-twitter-dark">Welcome back</h4>
+              </div>
+              <p className="text-twitter-secondary small text-center">Sign in to your account</p>
+            </Card.Header>
+            <Card.Body className="twitter-spacing">
+              {error && <Alert variant="danger" className="rounded-pill text-center">{error}</Alert>}
+              
               <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-3">
-                  <Form.Label>Email</Form.Label>
+                  <Form.Label className="fw-semibold text-twitter-dark">Email</Form.Label>
                   <Form.Control
                     type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
+                    placeholder="Enter your email"
+                    className="form-control-twitter"
                   />
                 </Form.Group>
+
                 <Form.Group className="mb-3">
-                  <Form.Label>Password</Form.Label>
+                  <Form.Label className="fw-semibold text-twitter-dark">Password</Form.Label>
                   <Form.Control
                     type="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     required
+                    placeholder="Enter your password"
+                    className="form-control-twitter"
                   />
                 </Form.Group>
-                <Button variant="primary" type="submit" className="w-100">
-                  Login
-                </Button>
+
+                <div className="d-grid">
+                  <Button 
+                    variant="primary" 
+                    type="submit" 
+                    className="btn-twitter"
+                    disabled={loading}
+                    size="lg"
+                  >
+                    {loading ? 'Signing in...' : 'Sign In'}
+                  </Button>
+                </div>
               </Form>
+
+              <div className="text-center mt-3">
+                <p className="mb-0 text-twitter-secondary">
+                  Don't have an account? <Link to="/register" className="text-twitter-primary fw-semibold">Sign up</Link>
+                </p>
+              </div>
+            </Card.Body>
+          </Card>
+
+          <Card className="card-twitter mt-3">
+            <Card.Body className="twitter-spacing text-center">
+              <h6 className="text-twitter-dark fw-bold">Demo Accounts</h6>
+              <div className="text-twitter-secondary small">
+                <div className="mb-2">
+                  <strong>Admin:</strong> thomas@nodehill.com
+                </div>
+                <div className="mb-2">
+                  <strong>User:</strong> olle@nodehill.com
+                </div>
+                <div className="mb-2">
+                  <strong>User:</strong> maria@nodehill.com
+                </div>
+                <div className="text-twitter-primary fw-semibold">
+                  Password: 12345678
+                </div>
+              </div>
             </Card.Body>
           </Card>
         </Col>
