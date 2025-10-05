@@ -18,7 +18,10 @@ export default function Header({ user, setUser }: HeaderProps) {
 
   const handleLogout = async () => {
     try {
-      await fetch('http://localhost:5002/api/login', { method: 'DELETE' });
+      await fetch('http://localhost:5002/api/login', { 
+        method: 'DELETE',
+        credentials: 'include'
+      });
       setUser(null);
       window.location.href = '/';
     } catch (error) {
