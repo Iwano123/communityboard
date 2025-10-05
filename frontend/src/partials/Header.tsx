@@ -23,6 +23,8 @@ export default function Header({ user, setUser }: HeaderProps) {
         credentials: 'include'
       });
       setUser(null);
+      // Clear viewed posts from localStorage on logout
+      localStorage.removeItem('viewedPosts');
       window.location.href = '/';
     } catch (error) {
       console.error('Error logging out:', error);

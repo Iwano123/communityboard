@@ -19,6 +19,8 @@ export default function RegisterPage() {
     e.preventDefault();
     // TODO: Implement registration logic
     console.log('Registration attempt:', formData);
+    // Clear viewed posts from localStorage on registration
+    localStorage.removeItem('viewedPosts');
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

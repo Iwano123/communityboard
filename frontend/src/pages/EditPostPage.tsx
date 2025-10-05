@@ -1,5 +1,7 @@
-import { Card, Container, Row, Col, Form, Button } from 'react-bootstrap';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { Card, Container, Row, Col, Form, Button, Alert, Spinner } from 'react-bootstrap';
+import { useParams, useNavigate, useOutletContext } from 'react-router-dom';
+import type { Post, User } from '../interfaces/BulletinBoard';
 
 EditPostPage.route = {
   path: '/edit-post/:id',
@@ -7,18 +9,68 @@ EditPostPage.route = {
 };
 
 export default function EditPostPage() {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const [, , user] = useOutletContext<[any, any, User | null, (user: User | null) => void]>();
+  
+  const [post, setPost] = useState<Post | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
   const [formData, setFormData] = useState({
     title: '',
     content: '',
-    category: '',
-    image: ''
+    category_id: '',
+    price: '',
+    location: '',
+    image_url: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // TODO: Implement post editing logic
-    console.log('Updating post:', formData);
-  };
+  useEffect(() => {
+    if (!id) return;
+    
+    const loadPost = async () => {
+      try {
+        setLoading(true);
+        setError('');
+
+        const response = await fetch(`http://localhost:5002/api/posts/${id}`, {
+          credentials: 'include'
+        });
+        
+        if (!response.ok) {
+          throw new Error('Post not found');
+        }
+        
+        const postData = await response.json();
+        setPost(postData);
+
+        // Check if user is authorized to edit this post
+        if (user?.id !== postData.author_id && user?.role !== 'admin') {
+          throw new Error('You are not authorized to edit this post');
+        }
+
+        // Populate form with existing data
+        setFormData({
+          title: postData.title || '',
+          content: postData.content || '',
+          category_id: postData.category_id?.toString() || '',
+          price: postData.price?.toString() || '',
+          location: postData.location || '',
+          image_url: postData.image_url || ''
+        });
+
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load post');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadPost();
+  }, [id, user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
@@ -27,13 +79,98 @@ export default function EditPostPage() {
     });
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      const updateData = {
+        title: formData.title,
+        content: formData.content,
+        category_id: formData.category_id ? parseInt(formData.category_id) : null,
+        price: formData.price ? parseFloat(formData.price) : null,
+        location: formData.location || null,
+        image_url: formData.image_url || null
+      };
+
+      const response = await fetch(`http://localhost:5002/api/posts/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(updateData),
+      });
+
+      if (response.ok) {
+        setSuccess('Post updated successfully!');
+        setTimeout(() => {
+          navigate(`/post/${id}`);
+        }, 1500);
+      } else {
+        const errorData = await response.json();
+        setError(errorData.error || 'Failed to update post');
+      }
+    } catch (err) {
+      setError('Error updating post');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <Container className="mt-4">
+        <Row>
+          <Col lg={8} className="mx-auto">
+            <Card>
+              <Card.Body className="text-center">
+                <Spinner animation="border" className="mb-3" />
+                <p>Loading post...</p>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+    );
+  }
+
+  if (error || !post) {
+    return (
+      <Container className="mt-4">
+        <Row>
+          <Col lg={8} className="mx-auto">
+            <Card>
+              <Card.Body className="text-center">
+                <Alert variant="danger">
+                  <h4>Error</h4>
+                  <p>{error || 'The post you are trying to edit does not exist.'}</p>
+                  <Button variant="primary" onClick={() => navigate('/')}>
+                    Back to Home
+                  </Button>
+                </Alert>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+    );
+  }
+
   return (
     <Container className="mt-4">
       <Row>
         <Col lg={8} className="mx-auto">
           <Card>
+            <Card.Header>
+              <h1 className="mb-0">Edit Post</h1>
+            </Card.Header>
             <Card.Body>
-              <h1 className="card-title">Edit Post</h1>
+              {error && <Alert variant="danger">{error}</Alert>}
+              {success && <Alert variant="success">{success}</Alert>}
+
               <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-3">
                   <Form.Label>Title</Form.Label>
@@ -45,21 +182,25 @@ export default function EditPostPage() {
                     required
                   />
                 </Form.Group>
+
                 <Form.Group className="mb-3">
                   <Form.Label>Category</Form.Label>
                   <Form.Select
-                    name="category"
-                    value={formData.category}
+                    name="category_id"
+                    value={formData.category_id}
                     onChange={handleChange}
                     required
                   >
                     <option value="">Select a category</option>
-                    <option value="event">Event</option>
-                    <option value="service">Service</option>
-                    <option value="announcement">Announcement</option>
-                    <option value="other">Other</option>
+                    <option value="1">For Sale</option>
+                    <option value="2">Services</option>
+                    <option value="3">Events</option>
+                    <option value="4">Housing</option>
+                    <option value="5">Jobs</option>
+                    <option value="6">Community</option>
                   </Form.Select>
                 </Form.Group>
+
                 <Form.Group className="mb-3">
                   <Form.Label>Content</Form.Label>
                   <Form.Control
@@ -71,18 +212,62 @@ export default function EditPostPage() {
                     required
                   />
                 </Form.Group>
+
+                <Row>
+                  <Col md={6}>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Price (optional)</Form.Label>
+                      <Form.Control
+                        type="number"
+                        step="0.01"
+                        name="price"
+                        value={formData.price}
+                        onChange={handleChange}
+                        placeholder="0.00"
+                      />
+                    </Form.Group>
+                  </Col>
+                  <Col md={6}>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Location (optional)</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="location"
+                        value={formData.location}
+                        onChange={handleChange}
+                        placeholder="City, State"
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+
                 <Form.Group className="mb-3">
                   <Form.Label>Image URL (optional)</Form.Label>
                   <Form.Control
                     type="url"
-                    name="image"
-                    value={formData.image}
+                    name="image_url"
+                    value={formData.image_url}
                     onChange={handleChange}
+                    placeholder="https://example.com/image.jpg"
                   />
                 </Form.Group>
-                <Button variant="primary" type="submit">
-                  Update Post
-                </Button>
+
+                <div className="d-flex gap-2">
+                  <Button
+                    variant="primary"
+                    type="submit"
+                    disabled={saving}
+                  >
+                    {saving ? 'Updating...' : 'Update Post'}
+                  </Button>
+                  <Button
+                    variant="outline-secondary"
+                    onClick={() => navigate(`/post/${id}`)}
+                    disabled={saving}
+                  >
+                    Cancel
+                  </Button>
+                </div>
               </Form>
             </Card.Body>
           </Card>
