@@ -76,7 +76,7 @@ export default function Header({ user, setUser, isDarkMode, setIsDarkMode }: Hea
             >
               C
             </div>
-            <span className="fw-bold text-dark">Community</span>
+            <span className="fw-bold text-twitter-dark">Community</span>
           </div>
         </Navbar.Brand>
 
@@ -173,7 +173,7 @@ export default function Header({ user, setUser, isDarkMode, setIsDarkMode }: Hea
                     >
                       {user.firstName.charAt(0).toUpperCase() || '?'}
                     </div>
-                    <span className="text-dark fw-semibold small">
+                    <span className="text-twitter-dark fw-semibold small">
                       {user.firstName}
                     </span>
                   </button>
