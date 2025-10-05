@@ -1,13 +1,17 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, Form, Button, Alert } from 'react-bootstrap';
 import { useStateContext } from '../utils/useStateObject';
 import { formatDate } from '../utils/bulletinBoardHelpers';
-import type { Comment } from '../interfaces/BulletinBoard';
+import type { Comment, User } from '../interfaces/BulletinBoard';
 
 interface CommentsSectionProps {
   postId: number;
   comments: Comment[];
   onCommentAdded: () => void;
+}
+
+interface CommentWithAuthor extends Comment {
+  author_name?: string;
 }
 
 export default function CommentsSection({ postId, comments, onCommentAdded }: CommentsSectionProps) {
@@ -16,6 +20,42 @@ export default function CommentsSection({ postId, comments, onCommentAdded }: Co
   const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [commentsWithAuthors, setCommentsWithAuthors] = useState<CommentWithAuthor[]>([]);
+
+  // Fetch author names for comments
+  useEffect(() => {
+    const fetchAuthorNames = async () => {
+      const commentsWithNames = await Promise.all(
+        comments.map(async (comment) => {
+          try {
+            const response = await fetch(`http://localhost:5002/api/users/${comment.author_id}`, {
+              credentials: 'include'
+            });
+            if (response.ok) {
+              const author: User = await response.json();
+              return {
+                ...comment,
+                author_name: `${author.firstName} ${author.lastName}`.trim()
+              };
+            }
+          } catch (err) {
+            console.error('Error fetching author:', err);
+          }
+          return {
+            ...comment,
+            author_name: 'Unknown User'
+          };
+        })
+      );
+      setCommentsWithAuthors(commentsWithNames);
+    };
+
+    if (comments.length > 0) {
+      fetchAuthorNames();
+    } else {
+      setCommentsWithAuthors([]);
+    }
+  }, [comments]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,6 +70,7 @@ export default function CommentsSection({ postId, comments, onCommentAdded }: Co
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
           post_id: postId,
           author_id: user.id,
@@ -56,7 +97,8 @@ export default function CommentsSection({ postId, comments, onCommentAdded }: Co
 
     try {
       const response = await fetch(`http://localhost:5002/api/comments/${commentId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        credentials: 'include'
       });
 
       if (response.ok) {
@@ -73,18 +115,18 @@ export default function CommentsSection({ postId, comments, onCommentAdded }: Co
   return (
     <Card className="mt-4">
       <Card.Header>
-        <h5 className="mb-0">Comments ({comments.length})</h5>
+        <h5 className="mb-0">Comments ({commentsWithAuthors.length})</h5>
       </Card.Header>
       <Card.Body>
-        {comments.length === 0 ? (
+        {commentsWithAuthors.length === 0 ? (
           <p className="text-muted">No comments yet. Be the first to comment!</p>
         ) : (
           <div className="mb-4">
-            {comments.map(comment => (
+            {commentsWithAuthors.map(comment => (
               <div key={comment.id} className="border-bottom pb-3 mb-3">
                 <div className="d-flex justify-content-between align-items-start">
                   <div>
-                    <strong>{comment.author_name}</strong>
+                    <strong>{comment.author_name || 'Unknown User'}</strong>
                     <small className="text-muted ms-2">{formatDate(comment.created_at)}</small>
                   </div>
                   {(user?.id === comment.author_id || user?.role === 'admin') && (
