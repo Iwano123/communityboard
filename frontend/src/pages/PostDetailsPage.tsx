@@ -212,7 +212,7 @@ export default function PostDetailsPage() {
         <Col lg={8} className="mx-auto">
           {/* Post Details */}
           <Card className="mb-4">
-            <Card.Header className="bg-white border-0 pb-0">
+            <Card.Header className="border-0 pb-0">
               <div className="d-flex align-items-center justify-content-between">
                 <div className="d-flex align-items-center">
                   <div

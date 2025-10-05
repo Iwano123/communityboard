@@ -125,7 +125,7 @@ export default function PostCard({
     <>
       <Card className="card-twitter hover-shadow mb-3">
         {/* Post Header */}
-        <Card.Header className="bg-white border-0 pb-0">
+        <Card.Header className="border-0 pb-0">
           <div className="d-flex align-items-center justify-content-between">
             <div className="d-flex align-items-center">
               <div
