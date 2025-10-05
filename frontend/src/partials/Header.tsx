@@ -8,13 +8,19 @@ import type { User } from '../interfaces/BulletinBoard';
 interface HeaderProps {
   user: User | null;
   setUser: (user: User | null) => void;
+  isDarkMode: boolean;
+  setIsDarkMode: (isDarkMode: boolean) => void;
 }
 
-export default function Header({ user, setUser }: HeaderProps) {
+export default function Header({ user, setUser, isDarkMode, setIsDarkMode }: HeaderProps) {
   const [expanded, setExpanded] = useState(false);
   const isOnline = useOnlineStatus();
   const location = useLocation();
 
+
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+  };
 
   const handleLogout = async () => {
     try {
@@ -46,7 +52,7 @@ export default function Header({ user, setUser }: HeaderProps) {
         <Navbar
           expanded={expanded}
           expand="lg"
-          className="bg-white border-bottom"
+          className="border-bottom"
           fixed="top"
           style={{ zIndex: 1000 }}
         >
@@ -107,6 +113,17 @@ export default function Header({ user, setUser }: HeaderProps) {
 
           {/* User Actions */}
           <Nav className="align-items-center">
+            {/* Dark Mode Toggle */}
+            <Button
+              variant="outline-secondary"
+              size="sm"
+              className="rounded-pill px-3 me-2"
+              onClick={toggleDarkMode}
+              title={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+            >
+              {isDarkMode ? '☀️' : '🌙'}
+            </Button>
+
             {user ? (
               <>
                 <Nav.Link as={Link} to="/post/create" className="me-2">

@@ -9,6 +9,12 @@ body {
   background-color: #f7f9fa;
 }
 
+// Navbar styles
+.navbar {
+  background-color: white !important;
+  border-color: #e1e8ed !important;
+}
+
 // Twitter-like design system
 .text-twitter-dark {
   color: #0f1419 !important;
@@ -157,6 +163,98 @@ body {
   
   &:hover {
     box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  }
+}
+
+// Dark mode styles
+[data-bs-theme="dark"] {
+  body {
+    background-color: #15202b;
+  }
+  
+  .text-twitter-dark {
+    color: #ffffff !important;
+  }
+  
+  .text-twitter-secondary {
+    color: #8b98a5 !important;
+  }
+  
+  .bg-twitter-white {
+    background-color: #192734 !important;
+  }
+  
+  .card-twitter {
+    background-color: #192734;
+    border: 1px solid #2f3336;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+  
+  .card-twitter:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  }
+  
+  .form-control-twitter {
+    background-color: #2f3336;
+    color: #ffffff;
+    border: 1px solid #2f3336;
+  }
+  
+  .form-control-twitter:focus {
+    background-color: #2f3336;
+    color: #ffffff;
+    border-color: #1d9bf0;
+    box-shadow: 0 0 0 2px rgba(29, 155, 240, 0.25);
+  }
+  
+  .btn-twitter-outline {
+    border-color: #2f3336;
+    color: #ffffff;
+  }
+  
+  .btn-twitter-outline:hover {
+    background-color: #1d9bf0;
+    border-color: #1d9bf0;
+    color: white;
+  }
+  
+  .badge-twitter {
+    background-color: #2f3336;
+    color: #8b98a5;
+  }
+  
+  .navbar {
+    background-color: #192734 !important;
+    border-color: #2f3336 !important;
+  }
+  
+  .navbar-brand,
+  .nav-link {
+    color: #ffffff !important;
+  }
+  
+  .dropdown-menu {
+    background-color: #192734;
+    border: 1px solid #2f3336;
+  }
+  
+  .dropdown-item {
+    color: #ffffff;
+  }
+  
+  .dropdown-item:hover {
+    background-color: #2f3336;
+    color: #ffffff;
+  }
+  
+  .dropdown-divider {
+    border-color: #2f3336;
+  }
+  
+  .alert-warning {
+    background-color: #3d2914;
+    border-color: #5a3a1f;
+    color: #f0ad4e;
   }
 }
 
