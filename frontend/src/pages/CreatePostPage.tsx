@@ -68,7 +68,7 @@ export default function CreatePostPage() {
       <Row className="justify-content-center">
         <Col lg={8}>
           <Card className="card-twitter">
-            <Card.Header className="bg-white border-0 pb-0">
+            <Card.Header className="border-0 pb-0">
               <h2 className="text-twitter-dark mb-0">Create New Post</h2>
               <p className="text-twitter-secondary small">Share something with your community</p>
             </Card.Header>

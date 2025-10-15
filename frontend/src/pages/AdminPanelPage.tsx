@@ -107,7 +107,7 @@ export default function AdminPanelPage() {
           <Row>
             <Col lg={6} className="mb-4">
               <Card className="card-twitter">
-                <Card.Header className="bg-white border-0">
+                <Card.Header className="border-0">
                   <h5 className="text-twitter-dark mb-0">Users</h5>
                 </Card.Header>
                 <Card.Body className="twitter-spacing">
@@ -151,7 +151,7 @@ export default function AdminPanelPage() {
 
             <Col lg={6} className="mb-4">
               <Card className="card-twitter">
-                <Card.Header className="bg-white border-0">
+                <Card.Header className="border-0">
                   <h5 className="text-twitter-dark mb-0">Posts</h5>
                 </Card.Header>
                 <Card.Body className="twitter-spacing">

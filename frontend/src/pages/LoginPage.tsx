@@ -52,7 +52,7 @@ export default function LoginPage() {
       <Row className="justify-content-center">
         <Col md={6} lg={4}>
           <Card className="card-twitter">
-            <Card.Header className="text-center bg-white border-0 pb-0">
+            <Card.Header className="text-center border-0 pb-0">
               <div className="d-flex align-items-center justify-content-center mb-3">
                 <div 
                   className="avatar-twitter me-2" 
