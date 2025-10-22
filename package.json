@@ -1,32 +1,37 @@
 {
-  "name": "community-bulletin-board",
-  "version": "1.0.0",
-  "description": "A full-stack community bulletin board application",
+  "name": "communityboard",
   "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
     "dev:backend": "cd backend && dotnet run",
-    "dev:frontend": "cd frontend && npm run dev",
-    "build": "cd frontend && npm run build",
-    "start": "cd frontend && npm run start",
-    "install": "npm run install:frontend && npm run install:backend",
-    "install:frontend": "cd frontend && npm install",
+    "dev:frontend": "npm run dev:vite",
+    "dev:vite": "vite",
+    "install:frontend": "npm install",
     "install:backend": "cd backend && dotnet restore",
-    "clean": "cd frontend && rm -rf node_modules dist && cd ../backend && rm -rf bin obj",
-    "lint": "cd frontend && npm run lint",
-    "test": "cd frontend && npm run test"
+    "install": "npm run install:backend"
   },
-  "keywords": [
-    "react",
-    "typescript",
-    "dotnet",
-    "sqlite",
-    "bulletin-board",
-    "community"
-  ],
-  "author": "Iwan Korkis",
-  "license": "MIT",
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.28.0",
+    "react-bootstrap": "^2.10.9",
+    "bootstrap": "^5.3.6",
+    "sass": "^1.77.6"
+  },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "@eslint/js": "^9.13.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.3",
+    "concurrently": "^9.1.0",
+    "eslint": "^9.13.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.14",
+    "globals": "^15.11.0",
+    "typescript": "~5.6.2",
+    "vite": "^6.0.1",
+    "vite-plugin-pwa": "^1.1.0"
   }
 }

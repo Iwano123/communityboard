@@ -57,7 +57,6 @@ A modern, Twitter-like community bulletin board application built with React, Ty
 
 ### Prerequisites
 - **Node.js** (v18 or higher)
-- **.NET 8 SDK**
 - **Git**
 
 ### Quick Start (Recommended)
@@ -73,46 +72,32 @@ A modern, Twitter-like community bulletin board application built with React, Ty
    npm install
    ```
 
-3. **Start both backend and frontend simultaneously**
+3. **Start the application**
    ```bash
    npm run dev
    ```
 
 4. **Open your browser**
-   Navigate to `http://localhost:5173` (frontend) and `http://localhost:5002` (backend API)
+   Navigate to `http://localhost:5173`
 
-### Alternative: Separate Commands
+### Alternative Commands
 
-If you prefer to run backend and frontend separately:
-
-1. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-2. **Start backend (Terminal 1)**
-   ```bash
-   npm run dev:backend
-   ```
-   Backend runs on `http://localhost:5002`
-
-3. **Start frontend (Terminal 2)**
-   ```bash
-   npm run dev:frontend
-   ```
-   Frontend runs on `http://localhost:5173` or `http://localhost:5174`
+- **Build for production**: `npm run build`
+- **Preview production build**: `npm run preview`
+- **Run tests**: `npm run test`
+- **Run tests with UI**: `npm run test:ui`
+- **Lint code**: `npm run lint`
 
 ### Troubleshooting
 
 **If you get an error about @rollup/rollup-darwin-arm64:**
 ```bash
-cd frontend
 rm -rf node_modules package-lock.json
 npm install
 ```
 
 **If you get CORS errors:**
-Make sure backend is running on port 5002 and frontend on port 5173/5174.
+Make sure the application is running on port 5173.
 
 ##  Usage
 
