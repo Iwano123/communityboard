@@ -157,9 +157,9 @@ export default function PostCard({
                 color: category_color || '#1d9bf0'
               }}
             >
-              {category_name?.replace(/\s+\d+$/, '') || 'Unknown'}
+              {category_name?.replace(/\s*\d+$/, '') || 'Unknown'}
             </Badge>
-            {is_featured && (
+            {!!is_featured && (
               <Badge className="badge-twitter" style={{ backgroundColor: '#ffd700', color: '#000' }}>
                 ⭐ Featured
               </Badge>

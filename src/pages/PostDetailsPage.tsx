@@ -271,7 +271,7 @@ export default function PostDetailsPage() {
                     color: '#1d9bf0'
                   }}
                 >
-                  {(post.category_name || 'General')?.replace(/\s+\d+$/, '')}
+                  {(post.category_name || 'General')?.replace(/\s*\d+$/, '')}
                 </Badge>
                 {post.is_featured && (
                   <Badge className="badge-twitter" style={{ backgroundColor: '#ffd700', color: '#000' }}>

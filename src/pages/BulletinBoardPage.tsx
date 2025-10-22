@@ -182,9 +182,6 @@ export default function BulletinBoardPage() {
               {categoriesWithCounts.slice(1, 6).map((cat, index) => (
                 <div key={index} className="d-flex justify-content-between align-items-center mb-2">
                   <span className="small text-twitter-secondary">{cat.split(' (')[0]}</span>
-                  <Badge className="badge-twitter small">
-                    {cat.split('(')[1]?.replace(')', '')}
-                  </Badge>
                 </div>
               ))}
             </Card.Body>
