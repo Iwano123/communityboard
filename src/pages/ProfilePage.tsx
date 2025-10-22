@@ -39,7 +39,7 @@ export default function ProfilePage() {
       if (!user) return;
       
       try {
-        const response = await fetch('http://localhost:5002/api/posts', {
+        const response = await fetch('/api/posts', {
           credentials: 'include'
         });
         if (response.ok) {
@@ -68,8 +68,14 @@ export default function ProfilePage() {
     setError('');
     setSuccess('');
 
+    if (!user) {
+      setError('User not found');
+      setLoading(false);
+      return;
+    }
+
     try {
-      const response = await fetch(`http://localhost:5002/api/users/${user.id}`, {
+      const response = await fetch(`/api/users/${user.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

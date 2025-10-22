@@ -18,6 +18,7 @@ export default function EditPostPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [categories, setCategories] = useState([]);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -29,6 +30,21 @@ export default function EditPostPage() {
   });
 
   useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch('/api/categories');
+        if (response.ok) {
+          const data = await response.json();
+          setCategories(data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch categories:', err);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
     if (!id) return;
     
     const loadPost = async () => {
@@ -36,7 +52,7 @@ export default function EditPostPage() {
         setLoading(true);
         setError('');
 
-        const response = await fetch(`http://localhost:5002/api/posts/${id}`, {
+        const response = await fetch(`/api/posts/${id}`, {
           credentials: 'include'
         });
         
@@ -95,7 +111,7 @@ export default function EditPostPage() {
         image_url: formData.image_url || null
       };
 
-      const response = await fetch(`http://localhost:5002/api/posts/${id}`, {
+      const response = await fetch(`/api/posts/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -192,12 +208,11 @@ export default function EditPostPage() {
                     required
                   >
                     <option value="">Select a category</option>
-                    <option value="1">For Sale</option>
-                    <option value="2">Services</option>
-                    <option value="3">Events</option>
-                    <option value="4">Housing</option>
-                    <option value="5">Jobs</option>
-                    <option value="6">Community</option>
+                    {categories.map((category: any) => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
+                      </option>
+                    ))}
                   </Form.Select>
                 </Form.Group>
 

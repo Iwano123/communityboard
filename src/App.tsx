@@ -35,7 +35,7 @@ export default function App() {
   useEffect(() => {
     const checkLoginStatus = async () => {
       try {
-        const response = await fetch('http://localhost:5002/api/login', {
+        const response = await fetch('/api/login', {
           credentials: 'include'
         });
         if (response.ok) {

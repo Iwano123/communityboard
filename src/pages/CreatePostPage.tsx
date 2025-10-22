@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
 import { useStateContext } from '../utils/useStateObject';
@@ -24,6 +24,26 @@ export default function CreatePostPage() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch('/api/categories');
+        if (response.ok) {
+          const data = await response.json();
+          setCategories(data);
+          // Set default category to first one
+          if (data.length > 0) {
+            setFormData(prev => ({ ...prev, category_id: data[0].id }));
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch categories:', err);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -39,11 +59,12 @@ export default function CreatePostPage() {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:5002/api/posts', {
+      const response = await fetch('/api/posts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
           ...formData,
           author_id: user?.id,
@@ -111,12 +132,11 @@ export default function CreatePostPage() {
                     onChange={handleChange}
                     className="form-control-twitter"
                   >
-                    <option value={1}>Community</option>
-                    <option value={2}>For Sale</option>
-                    <option value={3}>Services</option>
-                    <option value={4}>Jobs</option>
-                    <option value={5}>Events</option>
-                    <option value={6}>Featured</option>
+                    {categories.map((category: any) => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
+                      </option>
+                    ))}
                   </Form.Select>
                 </Form.Group>
 
