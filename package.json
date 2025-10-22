@@ -4,20 +4,18 @@
   "description": "A full-stack community bulletin board application",
   "private": true,
   "scripts": {
-    "dev": "cd frontend && npm run dev",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && dotnet run",
+    "dev:frontend": "cd frontend && npm run dev",
     "build": "cd frontend && npm run build",
     "start": "cd frontend && npm run start",
+    "install": "npm run install:frontend && npm run install:backend",
     "install:frontend": "cd frontend && npm install",
     "install:backend": "cd backend && dotnet restore",
-    "install:all": "npm run install:frontend && npm run install:backend",
     "clean": "cd frontend && rm -rf node_modules dist && cd ../backend && rm -rf bin obj",
     "lint": "cd frontend && npm run lint",
     "test": "cd frontend && npm run test"
   },
-  "workspaces": [
-    "frontend",
-    "backend"
-  ],
   "keywords": [
     "react",
     "typescript",
@@ -29,6 +27,6 @@
   "author": "Iwan Korkis",
   "license": "MIT",
   "devDependencies": {
-    "vite-plugin-pwa": "^1.0.3"
+    "concurrently": "^8.2.2"
   }
 }

@@ -3,11 +3,13 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "node node_modules/react-rapide dev",
     "build": "tsc && vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "start": "vite preview"
+    "preview": "node node_modules/react-rapide preview",
+    "start": "node node_modules/react-rapide dev",
+    "rr": "node node_modules/react-rapide",
+    "react-rapide": "node node_modules/react-rapide"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
@@ -41,6 +43,7 @@
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.24.1",
     "vite": "^6.2.0",
+    "vite-plugin-pwa": "^1.1.0",
     "vitest": "^3.2.4"
   }
 }

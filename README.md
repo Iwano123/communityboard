@@ -53,14 +53,14 @@ A modern, Twitter-like community bulletin board application built with React, Ty
 - **Session Management** - Secure user sessions
 - **ACL System** - Access control and security
 
-##  Installation
+## Installation and Running
 
 ### Prerequisites
 - **Node.js** (v18 or higher)
 - **.NET 8 SDK**
 - **Git**
 
-### Setup Instructions
+### Quick Start (Recommended)
 
 1. **Clone the repository**
    ```bash
@@ -68,30 +68,51 @@ A modern, Twitter-like community bulletin board application built with React, Ty
    cd communityboard
    ```
 
-2. **Install frontend dependencies**
+2. **Install all dependencies**
    ```bash
-   cd frontend
    npm install
    ```
 
-3. **Start the development servers**
-
-   **Backend (Terminal 1):**
+3. **Start both backend and frontend simultaneously**
    ```bash
-   cd backend
-   dotnet run
-   ```
-   Backend will run on `http://localhost:5002`
-
-   **Frontend (Terminal 2):**
-   ```bash
-   cd frontend
    npm run dev
    ```
-   Frontend will run on `http://localhost:5173` or `http://localhost:5174`
 
 4. **Open your browser**
-   Navigate to `http://localhost:5173` (or the port shown in terminal)
+   Navigate to `http://localhost:5173` (frontend) and `http://localhost:5002` (backend API)
+
+### Alternative: Separate Commands
+
+If you prefer to run backend and frontend separately:
+
+1. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+2. **Start backend (Terminal 1)**
+   ```bash
+   npm run dev:backend
+   ```
+   Backend runs on `http://localhost:5002`
+
+3. **Start frontend (Terminal 2)**
+   ```bash
+   npm run dev:frontend
+   ```
+   Frontend runs on `http://localhost:5173` or `http://localhost:5174`
+
+### Troubleshooting
+
+**If you get an error about @rollup/rollup-darwin-arm64:**
+```bash
+cd frontend
+rm -rf node_modules package-lock.json
+npm install
+```
+
+**If you get CORS errors:**
+Make sure backend is running on port 5002 and frontend on port 5173/5174.
 
 ##  Usage
 
