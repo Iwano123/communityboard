@@ -35,28 +35,42 @@ export default function PostDetailsPage() {
         const viewedPosts = JSON.parse(localStorage.getItem(viewedPostsKey) || '[]');
         const hasViewed = viewedPosts.includes(parseInt(id));
 
-        // First, get the current post
-        const currentPostResponse = await fetch(`http://localhost:5002/api/posts/${id}`, {
-          credentials: 'include'
-        });
+        // First, get the current post and categories
+        const [currentPostResponse, categoriesResponse] = await Promise.all([
+          fetch(`/api/posts/${id}`, {
+            credentials: 'include'
+          }),
+          fetch('/api/categories', {
+            credentials: 'include'
+          })
+        ]);
         
         if (!currentPostResponse.ok) {
           throw new Error('Post not found');
         }
         
         const currentPostData = await currentPostResponse.json();
+        const categoriesData = await categoriesResponse.json();
+        
+        // Join post with category data
+        const category = categoriesData.find((cat: any) => cat.id === currentPostData.category_id);
+        const postWithCategory = {
+          ...currentPostData,
+          category_name: category?.name || 'Unknown',
+          category_color: category?.color || '#007bff'
+        };
         
         // Increment view count only if user hasn't viewed this post in this session
         if (!hasViewed) {
           try {
-            await fetch(`http://localhost:5002/api/posts/${id}`, {
+            await fetch(`/api/posts/${id}`, {
               method: 'PUT',
               headers: {
                 'Content-Type': 'application/json',
               },
               credentials: 'include',
               body: JSON.stringify({
-                views: (currentPostData.views || 0) + 1
+                views: (postWithCategory.views || 0) + 1
               })
             });
             
@@ -72,16 +86,16 @@ export default function PostDetailsPage() {
           } catch (viewError) {
             console.log('Could not increment view count:', viewError);
             // Continue loading even if view increment fails
-            setPost(currentPostData);
+            setPost(postWithCategory);
           }
         } else {
           // User has already viewed this post, don't increment
-          setPost(currentPostData);
+          setPost(postWithCategory);
         }
 
         // Load author details
-        if (currentPostData.author_id) {
-          const authorResponse = await fetch(`http://localhost:5002/api/users/${currentPostData.author_id}`, {
+        if (postWithCategory.author_id) {
+          const authorResponse = await fetch(`/api/users/${postWithCategory.author_id}`, {
             credentials: 'include'
           });
           if (authorResponse.ok) {
@@ -91,7 +105,7 @@ export default function PostDetailsPage() {
         }
 
         // Load comments
-        const commentsResponse = await fetch(`http://localhost:5002/api/comments?post_id=${id}`, {
+        const commentsResponse = await fetch(`/api/comments?post_id=${id}`, {
           credentials: 'include'
         });
         
@@ -113,7 +127,7 @@ export default function PostDetailsPage() {
   const handleCommentAdded = async () => {
     // Reload comments
     try {
-      const response = await fetch(`http://localhost:5002/api/comments?post_id=${id}`, {
+      const response = await fetch(`/api/comments?post_id=${id}`, {
         credentials: 'include'
       });
       if (response.ok) {
@@ -129,7 +143,7 @@ export default function PostDetailsPage() {
     if (!post || !confirm('Are you sure you want to delete this post?')) return;
 
     try {
-      const response = await fetch(`http://localhost:5002/api/posts/${post.id}`, {
+      const response = await fetch(`/api/posts/${post.id}`, {
         method: 'DELETE',
         credentials: 'include'
       });
@@ -257,7 +271,7 @@ export default function PostDetailsPage() {
                     color: '#1d9bf0'
                   }}
                 >
-                  {post.category_name || 'General'}
+                  {(post.category_name || 'General')?.replace(/\s+\d+$/, '')}
                 </Badge>
                 {post.is_featured && (
                   <Badge className="badge-twitter" style={{ backgroundColor: '#ffd700', color: '#000' }}>

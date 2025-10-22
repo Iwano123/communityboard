@@ -28,7 +28,7 @@ export default function CommentsSection({ postId, comments, onCommentAdded }: Co
       const commentsWithNames = await Promise.all(
         comments.map(async (comment) => {
           try {
-            const response = await fetch(`http://localhost:5002/api/users/${comment.author_id}`, {
+            const response = await fetch(`/api/users/${comment.author_id}`, {
               credentials: 'include'
             });
             if (response.ok) {
@@ -65,7 +65,7 @@ export default function CommentsSection({ postId, comments, onCommentAdded }: Co
     setError('');
 
     try {
-      const response = await fetch('http://localhost:5002/api/comments', {
+      const response = await fetch('/api/comments', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -96,7 +96,7 @@ export default function CommentsSection({ postId, comments, onCommentAdded }: Co
     if (!confirm('Are you sure you want to delete this comment?')) return;
 
     try {
-      const response = await fetch(`http://localhost:5002/api/comments/${commentId}`, {
+      const response = await fetch(`/api/comments/${commentId}`, {
         method: 'DELETE',
         credentials: 'include'
       });

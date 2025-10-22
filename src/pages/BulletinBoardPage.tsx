@@ -16,7 +16,7 @@ BulletinBoardPage.route = {
 };
 
 export default function BulletinBoardPage() {
-  const rawPosts = useLoaderData().posts;
+  const rawPosts = (useLoaderData() as { posts: Post[] }).posts;
   const navigate = useNavigate();
   const [posts, setPosts] = useState<Post[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -26,8 +26,8 @@ export default function BulletinBoardPage() {
     const fetchData = async () => {
       try {
         const [categoriesResponse, usersResponse] = await Promise.all([
-          fetch('http://localhost:5002/api/categories'),
-          fetch('http://localhost:5002/api/users')
+          fetch('/api/categories'),
+          fetch('/api/users')
         ]);
 
         const categoriesData: Category[] = await categoriesResponse.json();
@@ -88,7 +88,7 @@ export default function BulletinBoardPage() {
     if (!confirm('Are you sure you want to delete this post?')) return;
 
     try {
-      const response = await fetch(`http://localhost:5002/api/posts/${postId}`, {
+      const response = await fetch(`/api/posts/${postId}`, {
         method: 'DELETE',
         credentials: 'include'
       });

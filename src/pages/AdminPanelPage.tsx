@@ -32,8 +32,8 @@ export default function AdminPanelPage() {
     const fetchData = async () => {
       try {
         const [usersResponse, postsResponse] = await Promise.all([
-          fetch('http://localhost:5002/api/users'),
-          fetch('http://localhost:5002/api/posts')
+          fetch('/api/users'),
+          fetch('/api/posts')
         ]);
 
         if (usersResponse.ok && postsResponse.ok) {
@@ -57,7 +57,7 @@ export default function AdminPanelPage() {
   const handleDeleteUser = async (userId: number) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
       try {
-        const response = await fetch(`http://localhost:5002/api/users/${userId}`, {
+        const response = await fetch(`/api/users/${userId}`, {
           method: 'DELETE'
         });
         if (response.ok) {
@@ -72,7 +72,7 @@ export default function AdminPanelPage() {
   const handleDeletePost = async (postId: number) => {
     if (window.confirm('Are you sure you want to delete this post?')) {
       try {
-        const response = await fetch(`http://localhost:5002/api/posts/${postId}`, {
+        const response = await fetch(`/api/posts/${postId}`, {
           method: 'DELETE'
         });
         if (response.ok) {
