@@ -57,6 +57,7 @@ A modern, Twitter-like community bulletin board application built with React, Ty
 
 ### Prerequisites
 - **Node.js** (v18 or higher)
+- **.NET SDK** (8.0 or higher)
 - **Git**
 
 ### Quick Start (Recommended)
@@ -79,6 +80,12 @@ A modern, Twitter-like community bulletin board application built with React, Ty
 
 4. **Open your browser**
    Navigate to `http://localhost:5173`
+
+### What happens when you run `npm run dev`:
+- Starts the **frontend** (Vite dev server on port 5173)
+- Starts the **backend** (.NET API on port 5002)
+- The backend automatically creates the SQLite database (`_db.sqlite3`) if it doesn't exist
+- Both servers run concurrently using `concurrently` package
 
 ### Alternative Commands
 
