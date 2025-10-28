@@ -84,8 +84,10 @@ A modern, Twitter-like community bulletin board application built with React, Ty
 ### What happens when you run `npm run dev`:
 - Starts the **frontend** (Vite dev server on port 5173)
 - Starts the **backend** (.NET API on port 5002)
-- The backend automatically creates the SQLite database (`_db.sqlite3`) if it doesn't exist
+- The backend automatically creates the SQLite database (`_db.sqlite3`) from the template if it doesn't exist
 - Both servers run concurrently using `concurrently` package
+
+**Important:** The database template (`backend/db_template/_db.sqlite3`) is included in git. On first run, the backend will automatically copy this template to create a working database with all necessary tables and initial data.
 
 ### Alternative Commands
 
@@ -97,6 +99,11 @@ A modern, Twitter-like community bulletin board application built with React, Ty
 
 ### Troubleshooting
 
+**If you get "[vite] http proxy error: /api/login":**
+This means the backend server isn't starting properly. The most common cause is:
+- Missing .NET SDK (install from https://dotnet.microsoft.com/download)
+- Database initialization issue (try deleting `backend/_db.sqlite3` and restart)
+
 **If you get an error about @rollup/rollup-darwin-arm64:**
 ```bash
 rm -rf node_modules package-lock.json
@@ -105,6 +112,13 @@ npm install
 
 **If you get CORS errors:**
 Make sure the application is running on port 5173.
+
+**First time setup:**
+When you clone the project, the database (`backend/_db.sqlite3`) is not included in git. The backend will automatically create it from the template database (`backend/db_template/_db.sqlite3`) on first run. If you still have issues:
+1. Delete `backend/_db.sqlite3` if it exists
+2. Delete `backend/_db.sqlite3-journal` if it exists
+3. Run `npm run dev` again
+4. The database will be automatically initialized from the template
 
 ##  Usage
 

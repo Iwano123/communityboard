@@ -3,6 +3,9 @@ public static class Server
 {
     public static void Start()
     {
+        // Initialize database if it doesn't exist
+        InitializeDatabase();
+        
         var builder = WebApplication.CreateBuilder();
         
         // Add CORS services
@@ -75,5 +78,32 @@ public static class Server
             }
             DebugLog.Add(context, info);
         });
+    }
+
+    // Initialize database by copying from template if it doesn't exist
+    private static void InitializeDatabase()
+    {
+        var dbPath = Globals.dbPath;
+        var dbTemplatePath = "db_template/_db.sqlite3";
+        
+        // Check if database file exists
+        if (!System.IO.File.Exists(dbPath))
+        {
+            // Check if template database exists
+            if (System.IO.File.Exists(dbTemplatePath))
+            {
+                System.IO.File.Copy(dbTemplatePath, dbPath);
+                Log("Database initialized from template:", dbTemplatePath);
+            }
+            else
+            {
+                Log("Warning: Database template not found at:", dbTemplatePath);
+                Log("Creating empty database. The database needs to be set up with proper tables.");
+            }
+        }
+        else
+        {
+            Log("Database already exists:", dbPath);
+        }
     }
 }
