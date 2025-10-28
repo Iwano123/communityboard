@@ -11,6 +11,32 @@ public static class FileServer
             Globals.frontendPath
         );
 
+        // Create dist directory if it doesn't exist
+        if (!Directory.Exists(FPath))
+        {
+            Directory.CreateDirectory(FPath);
+            Log("Created directory:", FPath);
+            
+            // Create a simple index.html if it doesn't exist
+            var indexPath = Path.Combine(FPath, "index.html");
+            if (!File.Exists(indexPath))
+            {
+                File.WriteAllText(indexPath, @"<!DOCTYPE html>
+<html>
+<head>
+    <title>Community Board</title>
+    <meta charset=""UTF-8"">
+    <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
+</head>
+<body>
+    <h1>Welcome to Community Board</h1>
+    <p>Run <b>npm run build</b> to compile your frontend, or <b>npm run dev</b> to use the Vite dev server.</p>
+</body>
+</html>");
+                Log("Created default index.html");
+            }
+        }
+
         HandleStatusCodes();
         ServeFiles();
         ServeFileLists();
