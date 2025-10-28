@@ -3,10 +3,24 @@ namespace WebApp;
 public static class DbQuery
 {
     // Setup the database connection
-    private static SqliteConnection db =
-        new SqliteConnection("Data Source=" + Globals.dbPath);
-
-    static DbQuery() { db.Open(); }
+    private static SqliteConnection db = null;
+    private static object dbLock = new object();
+    
+    private static SqliteConnection GetDb()
+    {
+        if (db == null)
+        {
+            lock (dbLock)
+            {
+                if (db == null)
+                {
+                    db = new SqliteConnection("Data Source=" + Globals.dbPath);
+                    db.Open();
+                }
+            }
+        }
+        return db;
+    }
 
     // Helper to create an object from the DataReader
     private static dynamic ObjFromReader(SqliteDataReader reader)
@@ -52,7 +66,7 @@ public static class DbQuery
     )
     {
         var paras = parameters == null ? Obj() : Obj(parameters);
-        var command = db.CreateCommand();
+        var command = GetDb().CreateCommand();
         command.CommandText = @sql;
         var entries = (Arr)paras.GetEntries();
         entries.ForEach(x => command.Parameters.AddWithValue(x[0], x[1]));

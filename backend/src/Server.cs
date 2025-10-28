@@ -84,7 +84,7 @@ public static class Server
     private static void InitializeDatabase()
     {
         var dbPath = Globals.dbPath;
-        var dbTemplatePath = "db_template/_db.sqlite3";
+        var dbTemplatePath = Path.Combine(Directory.GetCurrentDirectory(), "db_template", "_db.sqlite3");
         
         // Check if database file exists
         if (!System.IO.File.Exists(dbPath))
@@ -92,8 +92,15 @@ public static class Server
             // Check if template database exists
             if (System.IO.File.Exists(dbTemplatePath))
             {
-                System.IO.File.Copy(dbTemplatePath, dbPath);
-                Log("Database initialized from template:", dbTemplatePath);
+                try
+                {
+                    System.IO.File.Copy(dbTemplatePath, dbPath);
+                    Log("Database initialized from template:", dbTemplatePath);
+                }
+                catch (Exception ex)
+                {
+                    Log("Error copying database template:", ex.Message);
+                }
             }
             else
             {
